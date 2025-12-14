@@ -74,7 +74,6 @@
 					<0x2 0xc1 0 IRQ_TYPE_NONE>,
 					<0x2 0xc4 0 IRQ_TYPE_NONE>,
 					<0x2 0xc5 0 IRQ_TYPE_NONE>,
-					<0x2 0xc6 0 IRQ_TYPE_NONE>,
 					<0x2 0xc7 0 IRQ_TYPE_NONE>,
 					<0x2 0xc8 0 IRQ_TYPE_NONE>,
 					<0x2 0xc9 0 IRQ_TYPE_NONE>,
@@ -82,12 +81,12 @@
 					<0x2 0xcb 0 IRQ_TYPE_NONE>;
 			interrupt-names = "pm8150b_gpio1", "pm8150b_gpio2",
 					"pm8150b_gpio5", "pm8150b_gpio6",
-					"pm8150b_gpio7", "pm8150b_gpio8",
-					"pm8150b_gpio9", "pm8150b_gpio10",
-					"pm8150b_gpio11", "pm8150b_gpio12";
+					"pm8150b_gpio8", "pm8150b_gpio9",
+					"pm8150b_gpio10", "pm8150b_gpio11",
+					"pm8150b_gpio12";
 			gpio-controller;
 			#gpio-cells = <2>;
-			qcom,gpios-disallowed = <3 4>;
+			qcom,gpios-disallowed = <3 4 7>;
 		};
 
 		pm8150b_vadc: vadc@3100 {
@@ -385,6 +384,7 @@
 			#size-cells = <1>;
 			qcom,pmic-revid = <&pm8150b_revid>;
 			qcom,pmic-pbs = <&pm8150b_pbs1>;
+			qcom,soc-hi-res;
 			status = "okay";
 
 			qcom,fg-batt-soc@4000 {
@@ -561,7 +561,7 @@
 	pm8150b-wp-therm {
 		polling-delay-passive = <0>;
 		polling-delay = <0>;
-		thermal-governor = "user_space";
+		thermal-governor = "step_wise";
 		thermal-sensors = <&pm8150b_adc_tm ADC_AMUX_THM2_PU2>;
 		wake-capable-sensor;
 		trips {
@@ -731,17 +731,21 @@
 	};
 
 	soc {
-		polling-delay-passive = <100>;
+		polling-delay-passive = <1000>;
 		polling-delay = <0>;
 		thermal-governor = "low_limits_cap";
 		thermal-sensors = <&bcl_soc>;
 		wake-capable-sensor;
 		tracks-low;
 
-		disable-thermal-zone;
 		trips {
 			soc_trip:soc-trip {
-				temperature = <10>;
+				temperature = <5>;
+				hysteresis = <0>;
+				type = "passive";
+			};
+			soc_trip2:soc-trip2 {
+				temperature = <15>;
 				hysteresis = <0>;
 				type = "passive";
 			};
